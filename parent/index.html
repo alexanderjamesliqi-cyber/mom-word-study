@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>家长端 - 妈妈叫我背单词</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body data-page="parent">
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand link-brand" href="../parent/">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64" role="img">
+              <path class="rocket-flame" d="M26 49c-3 5-8 8-14 9 1-6 4-11 9-14z" />
+              <path class="rocket-body" d="M21 41C25 24 38 10 56 7c-2 18-15 31-32 35z" />
+              <path class="rocket-wing" d="M21 41 10 36l12-7zM24 42l5 11 7-12z" />
+              <circle class="rocket-window" cx="42" cy="21" r="5" />
+            </svg>
+          </div>
+          <div>
+            <h1>家长端</h1>
+            <p id="todayLabel"></p>
+          </div>
+        </a>
+      </header>
+
+      <section aria-labelledby="parentTitle">
+        <div class="parent-tabs" role="tablist" aria-label="家长端标签">
+          <button class="active" type="button" role="tab" aria-selected="true" data-parent-tab="plan">今日计划</button>
+          <button type="button" role="tab" aria-selected="false" data-parent-tab="review">检查验收</button>
+        </div>
+
+        <section id="planTab" class="panel parent-panel active" aria-labelledby="parentTitle">
+          <div class="panel-heading">
+            <span class="mini-icon" aria-hidden="true">P</span>
+            <h2 id="parentTitle">今日计划</h2>
+          </div>
+          <form id="planForm" class="plan-form">
+            <div class="quick-add">
+              <label for="quickWordInput">添加今日单词</label>
+              <div class="quick-add-row">
+                <input id="quickWordInput" autocomplete="off" placeholder="输入 apple 或 苹果" />
+                <button class="primary-btn icon-add-btn" type="button" id="confirmAddWord" aria-label="添加单词">+</button>
+              </div>
+              <div id="lookupHint" class="lookup-hint" aria-live="polite"></div>
+            </div>
+            <div class="word-list-toolbar" aria-label="单词操作">
+              <button class="ghost-btn" type="button" id="loadSample">填入示例</button>
+              <span>拖拽排序，右滑删除</span>
+            </div>
+            <div id="wordRows" class="simple-word-list" aria-label="今日单词列表"></div>
+            <p class="hint-text">输入英文或中文后确认添加；单词卡片可拖拽排序，移动端向右滑动可删除。</p>
+            <div class="form-actions">
+              <button class="primary-btn" type="submit">保存计划</button>
+            </div>
+          </form>
+          <div class="saved-plan">
+            <div class="section-title">
+              <h3>已保存</h3>
+              <button class="danger-btn" type="button" id="clearPlan">清空计划</button>
+            </div>
+            <div id="savedWords" class="saved-words"></div>
+          </div>
+        </section>
+
+        <section id="reviewTab" class="panel parent-panel" aria-labelledby="reviewTitle">
+          <div class="panel-heading">
+            <span class="mini-icon" aria-hidden="true">R</span>
+            <h2 id="reviewTitle">检查验收</h2>
+          </div>
+          <div class="review-date-bar">
+            <label for="reviewDate">验收日期</label>
+            <input id="reviewDate" type="date" />
+            <button class="secondary-btn" type="button" id="loadReviewDate">查询</button>
+          </div>
+          <div class="review-grid">
+            <article class="metric-card">
+              <span>计划单词</span>
+              <strong id="metricTotal">0</strong>
+            </article>
+            <article class="metric-card">
+              <span>已完成</span>
+              <strong id="metricDone">0</strong>
+            </article>
+            <article class="metric-card">
+              <span>测试通过</span>
+              <strong id="metricPassed">0</strong>
+            </article>
+            <article class="metric-card">
+              <span>需要复习</span>
+              <strong id="metricWeak">0</strong>
+            </article>
+          </div>
+          <div class="review-summary" id="reviewSummary"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>单词</th>
+                  <th>阶段</th>
+                  <th>造句</th>
+                  <th>填空</th>
+                  <th>读音</th>
+                  <th>中文</th>
+                  <th>完成时间</th>
+                </tr>
+              </thead>
+              <tbody id="reviewRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+    <script src="../app.js"></script>
+  </body>
+</html>
