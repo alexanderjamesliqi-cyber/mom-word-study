@@ -7,6 +7,7 @@ import os
 import re
 import sqlite3
 import subprocess
+import time
 from datetime import datetime
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -300,8 +301,20 @@ def trigger_deploy() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     log_file = DATA_DIR / "deploy.log"
     with log_file.open("ab") as log:
+        unit_name = f"mom-word-study-deploy-{int(time.time())}"
+        command = [
+            "/usr/bin/systemd-run",
+            "--unit",
+            unit_name,
+            "--collect",
+            "/bin/bash",
+            str(DEPLOY_SCRIPT),
+        ]
+        if not Path(command[0]).exists():
+            command = ["/bin/bash", str(DEPLOY_SCRIPT)]
+
         subprocess.Popen(
-            ["/bin/bash", str(DEPLOY_SCRIPT)],
+            command,
             cwd=BASE_DIR,
             stdout=log,
             stderr=subprocess.STDOUT,
