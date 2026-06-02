@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>孩子端 - 妈妈叫我背单词</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body data-page="child">
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand link-brand" href="../child/">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64" role="img">
+              <path class="rocket-flame" d="M26 49c-3 5-8 8-14 9 1-6 4-11 9-14z" />
+              <path class="rocket-body" d="M21 41C25 24 38 10 56 7c-2 18-15 31-32 35z" />
+              <path class="rocket-wing" d="M21 41 10 36l12-7zM24 42l5 11 7-12z" />
+              <circle class="rocket-window" cx="42" cy="21" r="5" />
+            </svg>
+          </div>
+          <div>
+            <h1>孩子端</h1>
+            <p id="todayLabel"></p>
+          </div>
+        </a>
+      </header>
+
+      <section class="child-stack" aria-labelledby="childTitle">
+        <section class="panel child-progress-panel">
+          <div class="child-progress-top">
+            <h2 id="childTitle">今日任务</h2>
+            <p><strong id="doneCount">0</strong> / <span id="totalCount">0</span> 个完成</p>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-bar" aria-label="今日背诵进度">
+            <span id="progressFill"></span>
+          </div>
+          <div class="word-trail" id="wordTrail"></div>
+        </section>
+
+        <section class="panel study-panel">
+          <div id="emptyChild" class="empty-state">
+            <div class="book-asset" aria-hidden="true">
+              <svg viewBox="0 0 220 160" role="img">
+                <path d="M20 34c38-16 70-9 90 8v91c-29-22-58-27-90-11z" fill="#fef4b2" stroke="#24324b" stroke-width="6" />
+                <path d="M110 42c23-18 57-24 90-8v88c-32-16-61-11-90 11z" fill="#c3f0ff" stroke="#24324b" stroke-width="6" />
+                <path d="M110 42v91" stroke="#24324b" stroke-width="6" />
+                <path d="M41 61h43M41 84h37M136 61h43M136 84h31" stroke="#24324b" stroke-width="6" stroke-linecap="round" />
+                <circle cx="76" cy="28" r="12" fill="#ffcf5a" stroke="#24324b" stroke-width="6" />
+              </svg>
+            </div>
+            <h2>今天还没有任务</h2>
+            <p>请让家长先添加今日单词。</p>
+          </div>
+
+          <div id="studyArea" class="study-area" hidden>
+            <div class="card-topline">
+              <span id="cardIndex">第 1 个</span>
+              <div class="phase-steps" aria-label="学习步骤">
+                <span data-step="preview">看词听音</span>
+                <span data-step="sentence">造句朗读</span>
+                <span data-step="test">测试</span>
+              </div>
+            </div>
+
+            <section id="previewPhase" class="phase-card">
+              <article class="word-card">
+                <p class="word-label">先看一遍，边看边听</p>
+                <h2 id="currentWord">word</h2>
+                <p id="currentPhonetic" class="phonetic-text"></p>
+                <p id="currentMeaning" class="meaning-text"></p>
+              </article>
+              <div class="study-actions">
+                <button class="secondary-btn" type="button" id="speakWordBtn">重播发音</button>
+                <button class="primary-btn" type="button" id="toSentenceBtn">我看完了</button>
+              </div>
+            </section>
+
+            <section id="sentencePhase" class="phase-card" hidden>
+              <article class="sentence-board">
+                <span>例句</span>
+                <strong id="exampleSentence"></strong>
+                <button class="ghost-btn compact" type="button" id="speakSentenceBtn">朗读例句</button>
+              </article>
+              <form id="sentenceForm" class="spell-box">
+                <label for="sentenceInput">用这个单词造句</label>
+                <textarea id="sentenceInput" rows="4" placeholder="写一句包含这个单词的英文句子"></textarea>
+                <div class="form-actions">
+                  <button class="secondary-btn" type="button" id="readSentenceBtn">朗读我的句子</button>
+                  <button class="primary-btn" type="submit">进入测试</button>
+                </div>
+                <p id="sentenceFeedback" class="feedback" aria-live="polite"></p>
+              </form>
+            </section>
+
+            <section id="testPhase" class="phase-card" hidden>
+              <form id="testForm" class="test-grid">
+                <div class="test-block">
+                  <label for="blankInput">单词填空</label>
+                  <p id="blankQuestion" class="question-text"></p>
+                  <input id="blankInput" autocomplete="off" placeholder="补全单词" />
+                </div>
+
+                <div class="test-block">
+                  <span class="field-label">读音纠正</span>
+                  <button class="secondary-btn" type="button" id="readWordBtn">读这个单词</button>
+                  <p id="pronunciationFeedback" class="feedback" aria-live="polite"></p>
+                </div>
+
+                <fieldset class="test-block meaning-options">
+                  <legend>中文意思选择</legend>
+                  <div id="meaningOptions"></div>
+                </fieldset>
+
+                <button class="primary-btn wide-btn" type="submit">完成这个单词</button>
+                <p id="testFeedback" class="feedback" aria-live="polite"></p>
+              </form>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+    <script src="../app.js"></script>
+  </body>
+</html>
