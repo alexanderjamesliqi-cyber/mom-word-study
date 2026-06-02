@@ -1,0 +1,7 @@
+__pycache__/
+.venv/
+data/state.json
+data/state-*.json
+data/ecdict.csv
+data/dictionary.db
+screenshots/
