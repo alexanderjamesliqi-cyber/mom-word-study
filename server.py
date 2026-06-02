@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import os
 import re
 import sqlite3
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -18,6 +21,7 @@ LEGACY_STATE_FILE = DATA_DIR / "state.json"
 DICTIONARY_DB = DATA_DIR / "dictionary.db"
 TIMEZONE = ZoneInfo(os.environ.get("WORD_APP_TIMEZONE", "Asia/Shanghai"))
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+DEPLOY_SCRIPT = BASE_DIR / "deploy.sh"
 
 app = Flask(__name__, static_folder=None)
 
@@ -282,6 +286,29 @@ def lookup_word(query: str) -> dict[str, str]:
     }
 
 
+def verify_github_signature(payload: bytes) -> bool:
+    secret = os.environ.get("DEPLOY_WEBHOOK_SECRET", "")
+    if not secret:
+        return False
+
+    signature = request.headers.get("X-Hub-Signature-256", "")
+    expected = "sha256=" + hmac.new(secret.encode("utf-8"), payload, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(signature, expected)
+
+
+def trigger_deploy() -> None:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    log_file = DATA_DIR / "deploy.log"
+    with log_file.open("ab") as log:
+        subprocess.Popen(
+            ["/bin/bash", str(DEPLOY_SCRIPT)],
+            cwd=BASE_DIR,
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+
+
 @app.get("/")
 def home():
     return send_from_directory(BASE_DIR, "index.html")
@@ -313,6 +340,23 @@ def lookup():
     if not query.strip():
         return jsonify({"error": "q is required"}), 400
     return jsonify(lookup_word(query))
+
+
+@app.post("/hooks/github")
+def github_hook():
+    payload = request.get_data()
+    if not verify_github_signature(payload):
+        return jsonify({"error": "invalid signature"}), 401
+
+    if request.headers.get("X-GitHub-Event") != "push":
+        return jsonify({"status": "ignored"})
+
+    body = request.get_json(silent=True) or {}
+    if body.get("ref") != "refs/heads/main":
+        return jsonify({"status": "ignored", "ref": body.get("ref")})
+
+    trigger_deploy()
+    return jsonify({"status": "deploy started"})
 
 
 @app.put("/api/state")
